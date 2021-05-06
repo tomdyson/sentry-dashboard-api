@@ -1,0 +1,46 @@
+<html>
+
+<head>
+    <title>Sentry events</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/tachyons/css/tachyons.min.css">
+</head>
+
+<body class="w-100 sans-serif cf ph3 ph5-ns pb5 bg-yellow black-70">
+    <h1 class="f-headline-ns f1 lh-solid mb2">BCUK donate events</h1>
+    <div id="app">
+        <h1>Events</h1>
+        <ul>
+            <li v-for="issue, name in issues">
+                <p class="lh-solid f3 mb2">{{ name }}</p>
+                <ul>
+                    <li v-for="event in issue.events">
+                        <a class="black dim"
+                            :href="'https://sentry.io/organizations/torchbox/issues/' + issue.issue_id + '/events/' + event.event_id">{{
+                            event.hours }} hours, {{ event.minutes }} minutes</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    issues: {}
+                }
+            },
+            mounted() {
+                axios
+                    .get('http://localhost:8000/')
+                    .then(response => (this.issues = response.data))
+            }
+        })
+    </script>
+</body>
+
+</html>

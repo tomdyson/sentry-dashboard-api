@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from dashboard import (
     fetch_events,
@@ -19,3 +20,6 @@ app.add_middleware(
 @app.get("/")
 async def root():
     return {event_type[0]: fetch_events(event_type[1]) for event_type in EVENT_TYPES}
+
+
+app.mount("/static", StaticFiles(directory="static", html=True), name="static")
