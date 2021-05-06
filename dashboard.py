@@ -26,12 +26,12 @@ def fetch_events(issue_id):
     headers = {"Authorization": f"Bearer {SENTRY_API_KEY}"}
     resp = requests.get(url, headers=headers)
     events = resp.json()
-    reduced_events = []
+    reduced_events = {"issue_id": issue_id, "events": []}
     for event in events:
         delta = arrow.utcnow() - arrow.get(event["dateCreated"])
         if delta.seconds < EXCLUDE_OLDER_THAN:
             hours, minutes, seconds = delta_as_hours_etc(delta)
-            reduced_events.append(
+            reduced_events["events"].append(
                 {
                     "hours": hours,
                     "minutes": minutes,
@@ -45,7 +45,7 @@ def fetch_events(issue_id):
 
 def event_report(events, event_name):
     print(f"# {event_name} in the last {int(EXCLUDE_OLDER_THAN / 3600)} hour(s)")
-    for event in events:
+    for event in events["events"]:
         print(
             f"{event['hours']}hrs, {event['minutes']}mins, {event['seconds']}secs - {event['event_id']}"
         )
