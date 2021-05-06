@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-EXCLUDE_OLDER_THAN = 3600 * 1  # one hour
+EXCLUDE_OLDER_THAN = int(os.environ.get("EXCLUDE_OLDER_THAN", 3600 * 1))  # one hour
 SENTRY_API_KEY = os.environ.get("SENTRY_API_KEY")
 EVENT_TYPES = [
     ("form submissions", os.environ.get("FORM_SUBMISSION_ID")),
