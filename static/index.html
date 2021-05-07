@@ -20,7 +20,7 @@
                     <li v-for="event in issue.events">
                         <a class="black dim"
                             :href="'https://sentry.io/organizations/torchbox/issues/' + issue.issue_id + '/events/' + event.event_id">{{
-                            event.hours }} hours, {{ event.minutes }} minutes</a>
+                            event.timestamp }} &mdash; {{ event.humanised_time }}</a>
                     </li>
                 </ul>
             </li>
