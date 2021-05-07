@@ -27,17 +27,12 @@ def fetch_events(issue_id):
     resp = requests.get(url, headers=headers)
     events = resp.json()
     reduced_events = {"issue_id": issue_id, "events": []}
+    now = arrow.utcnow()
     for event in events:
-        delta = arrow.utcnow() - arrow.get(event["dateCreated"])
-        if delta.seconds < EXCLUDE_OLDER_THAN:
-            hours, minutes, seconds = delta_as_hours_etc(delta)
+        timestamp = arrow.get(event["dateCreated"])
+        if timestamp > now.shift(seconds=-1 * EXCLUDE_OLDER_THAN):
             reduced_events["events"].append(
-                {
-                    "hours": hours,
-                    "minutes": minutes,
-                    "seconds": seconds,
-                    "event_id": event["eventID"],
-                }
+                {"timestamp": timestamp, "event_id": event["eventID"]}
             )
             # print(f"{hours}hrs, {minutes}mins, {seconds}secs - {event['eventID']}")
     return reduced_events
@@ -47,7 +42,7 @@ def event_report(events, event_name):
     print(f"# {event_name} in the last {int(EXCLUDE_OLDER_THAN / 3600)} hour(s)")
     for event in events["events"]:
         print(
-            f"{event['hours']}hrs, {event['minutes']}mins, {event['seconds']}secs - {event['event_id']}"
+            f"{event['timestamp'].format()} - {event['timestamp'].humanize()} - {event['event_id']}"
         )
 
 
