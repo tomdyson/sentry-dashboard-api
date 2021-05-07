@@ -32,7 +32,11 @@ def fetch_events(issue_id):
         timestamp = arrow.get(event["dateCreated"])
         if timestamp > now.shift(seconds=-1 * EXCLUDE_OLDER_THAN):
             reduced_events["events"].append(
-                {"timestamp": timestamp, "event_id": event["eventID"]}
+                {
+                    "timestamp": timestamp.format(),
+                    "humanised_time": timestamp.humanize(),
+                    "event_id": event["eventID"],
+                }
             )
             # print(f"{hours}hrs, {minutes}mins, {seconds}secs - {event['eventID']}")
     return reduced_events
@@ -41,9 +45,7 @@ def fetch_events(issue_id):
 def event_report(events, event_name):
     print(f"# {event_name} in the last {int(EXCLUDE_OLDER_THAN / 3600)} hour(s)")
     for event in events["events"]:
-        print(
-            f"{event['timestamp'].format()} - {event['timestamp'].humanize()} - {event['event_id']}"
-        )
+        print(f"{event['timestamp']} - {event['humanised_time']} - {event['event_id']}")
 
 
 def run_reports():
